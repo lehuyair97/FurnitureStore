@@ -6,7 +6,7 @@ exports.createUser = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const user = await User.create({ ...req.body, password: hashedPassword });
-    res.status(200).json(user);
+    res.status(200).json({isSuccess: true, user: user});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -130,7 +130,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Incorrect password" });
     }
 
-    res.status(200).json({ message: "Login successful" });
+    res.status(200).json(true);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
