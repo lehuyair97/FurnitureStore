@@ -3,6 +3,7 @@ package com.example.mobileandroidapp_kotlin.viewmodal
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mobileandroidapp_kotlin.model.Furnitures
 import com.example.mobileandroidapp_kotlin.model.SignIn
 import com.example.mobileandroidapp_kotlin.model.Users
 import com.example.mobileandroidapp_kotlin.model.YourDataModel
@@ -23,11 +24,25 @@ class MainViewModel : ViewModel() {
 
     // Data for BottomTab
     private val _data = MutableStateFlow<List<YourDataModel>>(emptyList())
-    val data: StateFlow<List<YourDataModel>> = _data
+    val data: StateFlow<List<YourDataModel>> = _data    // Data for BottomTab
+
+    // Data  Funitures
+    private val _funituresData = MutableStateFlow<List<Furnitures>>(emptyList())
+    val funituresData: StateFlow<List<Furnitures>> = _funituresData
+
 
     // Bottom navigation state
     private val _selectedTab = MutableStateFlow(0)
     val selectedTab: StateFlow<Int> = _selectedTab
+
+    //Detail Item
+    private val _detailItem = MutableStateFlow<Furnitures?>(null)
+    val detailItem: StateFlow<Furnitures?> = _detailItem
+
+    fun setDetail(furniture: Furnitures) {
+        _detailItem.value = furniture
+    }
+
 
     fun signIn(request: SignIn) {
         viewModelScope.launch {
@@ -38,20 +53,24 @@ class MainViewModel : ViewModel() {
                 if (loginResult) {
                                     _signInState.value = true
                 } else {
-
                 }
             } catch (e: Exception) {
                 Log.e("Data", "value Error: $e")
             }
-//            try {
-//                val response = RetrofitInstance.api.signIn(request)
-//                val json = Gson().toJson(response)
-//                Log.e("Data", "value Response: $json")
-//                Log.e("Data", "value Response: ${response}")
-////                _signInState.value = response
-//            } catch (e: Exception) {
-//                Log.e("Data", "value Error: $e")
-//            }
+//
+        }
+    }
+
+    fun fetchFunitures() {
+        viewModelScope.launch {
+            try {
+                val data = RetrofitInstance.api.getFunitures()
+                if(data != null){
+                    _funituresData.value = data;
+                }
+            } catch (e: Exception) {
+                Log.e("Data", "value Error: $e")
+            }
         }
     }
 //    fun getUsers() {

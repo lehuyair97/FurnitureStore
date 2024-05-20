@@ -77,4 +77,15 @@ dependencies {
     // Other dependencies
     implementation ("androidx.navigation:navigation-compose:2.5.0")
 
+    //Load Image Url
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
+
+    //ICON
+    implementation ("androidx.compose.material:material-icons-extended:x.y.z")
+
+
+
+
 }

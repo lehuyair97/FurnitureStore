@@ -1,3 +1,4 @@
+import com.example.mobileandroidapp_kotlin.model.Furnitures
 import com.example.mobileandroidapp_kotlin.model.SignIn
 import com.example.mobileandroidapp_kotlin.model.SignUpResponse
 import com.example.mobileandroidapp_kotlin.model.Users
@@ -12,7 +13,8 @@ interface ApiService {
 
     @POST("users")
     suspend fun signUp(@Body request: Users) : SignUpResponse
-
+    @GET("Furniture")
+    suspend fun getFunitures(): List<Furnitures>
     @GET("your_endpoint")
     suspend fun getYourData(): List<YourDataModel>
 }
