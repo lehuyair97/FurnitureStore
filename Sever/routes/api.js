@@ -52,7 +52,9 @@ router.post("/users/uploads", upload.array("avatar"), userAPI.createUserWithImag
 router.post("/users", userAPI.createUser);
 router.get("/users", userAPI.getAllUsers);
 router.get("/users/:id", userAPI.getUserById);
-router.put("/users/:id", userAPI.updateUser);
+router.put("/change_pw/:id", userAPI.changePassword);
+router.put("/favorites/:id", userAPI.updateFavorite);
+router.put("/payment_method/:id", userAPI.updatePaymentMethod);
 router.delete("/users/:id", userAPI.deleteUser);
 router.post("/login", userAPI.login);
 

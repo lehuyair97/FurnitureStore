@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -27,10 +28,11 @@ import com.example.mobileandroidapp_kotlin.R
 import com.example.mobileandroidapp_kotlin.model.SignIn
 import com.example.mobileandroidapp_kotlin.model.Users
 import com.example.mobileandroidapp_kotlin.ui.theme.MobileAndroidApp_KotlinTheme
-import com.example.mobileandroidapp_kotlin.viewmodal.MainViewModel
+import com.example.mobileandroidapp_kotlin.viewmodel.MainViewModel
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignInScreen(navController: NavController, viewModel: MainViewModel = viewModel()) {
+fun SignInScreen(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }

@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -33,12 +34,13 @@ import com.example.mobileandroidapp_kotlin.ui.screens.SignInScreen
 import com.example.mobileandroidapp_kotlin.ui.screens.SignUpScreen
 import com.example.mobileandroidapp_kotlin.ui.screens.tabscreens.HomeScreen
 import com.example.mobileandroidapp_kotlin.ui.theme.MobileAndroidApp_KotlinTheme
+import com.example.mobileandroidapp_kotlin.viewmodel.MainViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import dagger.hilt.android.AndroidEntryPoint
 
 
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -61,15 +63,14 @@ class MainActivity : ComponentActivity() {
 fun MyApp() {
 
 
-    val navController = rememberNavController()
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .systemBarsPadding()
           
     ) {
-        NavHostAppContainer(navController)
+        var viewModel: MainViewModel = hiltViewModel();
+        NavHostAppContainer(viewModel = viewModel)
 //        DetailScreen(navController = navController)
     }
 

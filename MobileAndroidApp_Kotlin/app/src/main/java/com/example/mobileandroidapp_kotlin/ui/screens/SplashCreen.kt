@@ -9,23 +9,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
-import kotlinx.coroutines.delay
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
-import com.example.mobileandroidapp_kotlin.R // Đảm bảo rằng bạn import đúng tệp nguồn
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.mobileandroidapp_kotlin.R
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mobileandroidapp_kotlin.model.Screens
+import com.example.mobileandroidapp_kotlin.viewmodel.MainViewModel
 
 @Composable
-fun SplashScreen(navController: NavController) {
-    LaunchedEffect(key1 = true) {
-//        delay(3000)
-//        navController.navigate("signin")
-    }
+fun SplashScreen(navController: NavController,viewModel: MainViewModel) {
+    viewModel.fetchFurnitures()
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -38,12 +37,11 @@ fun SplashScreen(navController: NavController) {
             contentScale = ContentScale.FillBounds // Thiết lập scale cho hình ảnh
         )
         val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-
         Button(
-            onClick = { navController.navigate("signin")},
+            onClick = { navController.navigate(Screens.SignIn.route)},
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = (0.75f) * screenHeight) // Cách top 3/4 màn hình
+                .padding(top = (0.75f) * screenHeight)
                 .padding(horizontal = 20.dp, vertical = 10.dp)
                 .background(color = Color.Black),
             colors = ButtonDefaults.buttonColors(Color.Black)
@@ -52,5 +50,3 @@ fun SplashScreen(navController: NavController) {
         }
     }
 }
-
-

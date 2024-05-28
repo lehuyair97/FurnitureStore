@@ -68,29 +68,58 @@ exports.getUserById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-exports.updateUser = async (req, res) => {
+exports.changePassword = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { password, ...userData } = req.body;
-
-    if (password) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const updatedUser = await User.findByIdAndUpdate(id, { ...userData, password: hashedPassword }, { new: true });
-      if (!updatedUser) {
-        return res.status(404).json({ message: `User not found with ID: ${id}` });
+      const { id } = req.params;
+      const { password, ...userData } = req.body;
+      if (password) {
+          const hashedPassword = await bcrypt.hash(password, 10);
+          userData.password = hashedPassword;
       }
-      res.status(200).json(updatedUser);
-    } else {
       const updatedUser = await User.findByIdAndUpdate(id, userData, { new: true });
       if (!updatedUser) {
+          return res.status(404).json({ message: `User not found with ID: ${id}` });
+      }
+
+      res.status(200).json(updatedUser);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};
+
+exports.updateFavorite = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { favorites, ...userData } = req.body;
+
+    if (favorites) {
+      const updatedUser = await User.findByIdAndUpdate(id, { ...userData, favorites: favorites }, { new: true });
+      if (!updatedUser) {
         return res.status(404).json({ message: `User not found with ID: ${id}` });
       }
-      res.status(200).json(updatedUser);
-    }
+      res.status(200).json({isSuccess: true, user: updatedUser});
+    } 
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.updatePaymentMethod = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { paymentMethod, ...userData } = req.body;
+    if (paymentMethod) {
+      const updatedUser = await User.findByIdAndUpdate(id, { ...userData, paymentMethod: paymentMethod }, { new: true });
+      if (!updatedUser) {
+        return res.status(404).json({ message: `User not found with ID: ${id}` });
+      }
+      res.status(200).json({isSuccess: true, user: updatedUser});
+    } 
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 exports.deleteUser = async (req, res) => {
   try {
@@ -130,7 +159,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Incorrect password" });
     }
 
-    res.status(200).json(true);
+    res.status(200).json({isSuccess: true, user: user});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

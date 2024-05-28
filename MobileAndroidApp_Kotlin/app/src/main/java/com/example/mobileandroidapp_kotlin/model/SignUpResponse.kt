@@ -1,6 +1,6 @@
 package com.example.mobileandroidapp_kotlin.model
 
-data class SignUpResponse(
+data class UserReponse(
     val isSuccess: Boolean,
     val user: Users
 )

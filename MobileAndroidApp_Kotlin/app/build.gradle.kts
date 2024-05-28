@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.dagger.hilt.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -30,11 +32,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17 // Nâng cấp phiên bản Java của bạn lên ít nhất Java 1.8
+        targetCompatibility = JavaVersion.VERSION_17 // Tương tự như trên
     }
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17" // Sử dụng phiên bản JVM 1.8
     }
     buildFeatures {
         compose = true
@@ -47,7 +50,10 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
 }
+
+
 
 dependencies {
 
@@ -85,7 +91,14 @@ dependencies {
     //ICON
     implementation ("androidx.compose.material:material-icons-extended:x.y.z")
 
+    implementation("androidx.room:room-runtime:2.2.5")
 
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
 
+    // Hilt ViewModel
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0-alpha01")
+    kapt("androidx.hilt:hilt-compiler:1.1.0")
 
 }

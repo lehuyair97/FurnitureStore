@@ -29,13 +29,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.mobileandroidapp_kotlin.Components.HeadNav
 import com.example.mobileandroidapp_kotlin.R
 import com.example.mobileandroidapp_kotlin.model.Categories
-import com.example.mobileandroidapp_kotlin.viewmodal.MainViewModel
+import com.example.mobileandroidapp_kotlin.model.Screens
+import com.example.mobileandroidapp_kotlin.viewmodel.MainViewModel
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +45,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(navController: NavController,viewModel: MainViewModel = viewModel()) {
+fun HomeScreen(navController: NavController,viewModel: MainViewModel = hiltViewModel()) {
     val categoryList: List<Categories> = listOf(
         Categories("All", icon = painterResource(id = R.drawable.ic_all)),
         Categories("Chair", icon = painterResource(id = R.drawable.ic_chair)),
@@ -53,15 +55,24 @@ fun HomeScreen(navController: NavController,viewModel: MainViewModel = viewModel
         Categories("Bed", icon = painterResource(id = R.drawable.ic_bed)),
 
     )
-    viewModel.fetchFunitures()
-    val funituresData by viewModel.funituresData.collectAsState()
-
+    val funituresData by viewModel.furnituresData.collectAsState()
     var isPressed by remember { mutableStateOf(false) }
     var itemSelectedName by remember { mutableStateOf("") }
+    val cartsQuantity by viewModel.getCart().collectAsState();
+    val cartsQt = cartsQuantity.size
+    val currentUser by viewModel.currentUser.collectAsState();
+    Log.e("User Information", "User Info: $currentUser")
 
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        HeadNav(Icons.Default.Search, title = "Beautifull", subTitle = "Make Home", Icons.Default.ShoppingCart)
+
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(top = 40.dp)) {
+        HeadNav(Icons.Default.Search, title = "Beautifull", subTitle = "Make Home", Icons.Default.ShoppingCart, leadIconClick = {}
+            , traillingIconClick = {navController.navigate(
+            Screens.Cart.route)
+        },
+            cartQuantity=cartsQt)
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(16.dp),
@@ -101,9 +112,11 @@ fun HomeScreen(navController: NavController,viewModel: MainViewModel = viewModel
                     rowItems.forEach { furniture ->
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.weight(1f)
-                                .clickable { Log.e("Tag", "this is: "+furniture.name)
-                                    Log.e("Tag", "value furniture: "+furniture )
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable {
+                                    Log.e("Tag", "this is: " + furniture.name)
+                                    Log.e("Tag", "value furniture: " + furniture)
                                     itemSelectedName = furniture.name
                                     CoroutineScope(Dispatchers.Default).launch {
                                         isPressed = true
@@ -113,13 +126,15 @@ fun HomeScreen(navController: NavController,viewModel: MainViewModel = viewModel
                                         }
                                     }
                                     viewModel.setDetail(furniture);
-                                    Log.e("Tag", "value viewModal: "+valueModal )
+                                    Log.e("Tag", "value viewModal: " + valueModal)
                                     navController.navigate("detail")
-                                     }
+                                }
 //                                .background(Color.White,)
-                                .background(if(itemSelectedName == furniture.name) {
-                                    if(isPressed) Color.Gray else Color.White
-                                } else Color.White)
+                                .background(
+                                    if (itemSelectedName == furniture.name) {
+                                        if (isPressed) Color.Gray else Color.White
+                                    } else Color.White
+                                )
 
 
 
@@ -144,7 +159,9 @@ fun HomeScreen(navController: NavController,viewModel: MainViewModel = viewModel
                                     )
                             }
                             Column (
-                                modifier = Modifier.padding(top = 5.dp, bottom = 10.dp).fillMaxWidth()
+                                modifier = Modifier
+                                    .padding(top = 5.dp, bottom = 10.dp)
+                                    .fillMaxWidth()
                             ){
                                 Text(
                                     text = furniture.name,

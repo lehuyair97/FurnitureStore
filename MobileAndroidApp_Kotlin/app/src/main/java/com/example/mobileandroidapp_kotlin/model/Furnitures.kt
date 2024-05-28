@@ -1,6 +1,7 @@
 package com.example.mobileandroidapp_kotlin.model
 
 data class Furnitures(
+val _id: String,
 val name: String,
 val rating: Float,
 val price: Float,

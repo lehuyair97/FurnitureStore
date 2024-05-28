@@ -14,19 +14,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobileandroidapp_kotlin.Components.ButtonCustom
 import com.example.mobileandroidapp_kotlin.R
 import com.example.mobileandroidapp_kotlin.model.Users
 import com.example.mobileandroidapp_kotlin.ui.theme.MobileAndroidApp_KotlinTheme
-import com.example.mobileandroidapp_kotlin.viewmodal.MainViewModel
+import com.example.mobileandroidapp_kotlin.viewmodel.MainViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpScreen(navController: NavController, viewModel: MainViewModel = viewModel()) {
+fun SignUpScreen(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -105,7 +107,7 @@ fun SignUpScreen(navController: NavController, viewModel: MainViewModel = viewMo
             ))
         Spacer(modifier = Modifier.height(25.dp))
         ButtonCustom("Sign Up"){
-            viewModel.signUp(Users(name,email,password,"","",0))
+            viewModel.signUp(Users(name,email,password,"","",""))
         }
         Spacer(modifier = Modifier.height(15.dp))
         TextButton(onClick = { navController.navigate("signin") }) {

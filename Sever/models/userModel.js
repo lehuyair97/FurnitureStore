@@ -7,6 +7,14 @@ const userSchema = new mongoose.Schema({
   avatar: { type: String }, 
   address:{type:String},
   phoneNumber:{type:Number},
+  favorites:{
+    type: Array,
+    default: []
+  },
+  paymentMethod:{
+    type: Array,
+    default: []
+  },
   createdAt: { type: Date, default: Date.now }
 });
 
