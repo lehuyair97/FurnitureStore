@@ -119,6 +119,27 @@ exports.updatePaymentMethod = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+exports.updateInfo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const newUser = req.body;
+    
+    if (newUser) {
+      const updatedUser = await User.findByIdAndUpdate(id, newUser, { new: true, runValidators: true });
+      
+      if (!updatedUser) {
+        return res.status(404).json({ message: `User not found with ID: ${id}` });
+      }
+      
+      return res.status(200).json({ isSuccess: true, user: updatedUser });
+    } else {
+      return res.status(400).json({ message: 'No user data provided' });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 
 
 exports.deleteUser = async (req, res) => {

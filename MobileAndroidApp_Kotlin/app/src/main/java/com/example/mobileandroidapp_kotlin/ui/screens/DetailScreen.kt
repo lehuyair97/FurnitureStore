@@ -1,6 +1,5 @@
 package com.example.mobileandroidapp_kotlin.ui.screens
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -48,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.example.mobileandroidapp_kotlin.Components.ButtonCustom
 import com.example.mobileandroidapp_kotlin.Components.H1
 import com.example.mobileandroidapp_kotlin.Components.H3
@@ -60,12 +58,17 @@ import com.example.mobileandroidapp_kotlin.model.Carts
 import com.example.mobileandroidapp_kotlin.model.Screens
 
 import com.example.mobileandroidapp_kotlin.viewmodel.MainViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(navController: NavController, viewModel: MainViewModel){
+    CoroutineScope(Dispatchers.Default).launch {
+        viewModel.setShowBottomNav(false)
+    }
     val context = LocalContext.current
-    viewModel.setShowBottomNav(false)
     val item by viewModel.detailItem.collectAsState()
     var quantity by remember{ mutableStateOf(1)}
     Column (modifier = Modifier.fillMaxSize()){
@@ -97,7 +100,7 @@ fun DetailScreen(navController: NavController, viewModel: MainViewModel){
                     .background(Color.White, shape = RoundedCornerShape(5.dp))
                     .clickable {
                         viewModel.setShowBottomNav(true)
-                        navController.navigate(Screens.BottomTab.route)
+                        navController.popBackStack()
                     }
             )
 

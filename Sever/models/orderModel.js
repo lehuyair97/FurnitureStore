@@ -20,7 +20,7 @@ const orderModel = new mongoose.Schema({
     required: true,
   },
   customerPhoneNumber: {
-    type: String,
+    type: Number,
     required: true,
   },
   deliveryMethod: {
@@ -31,19 +31,11 @@ const orderModel = new mongoose.Schema({
     type: String,
     required: true,
   },
-  shippingFee: {
-    type: Number,
-    required: true,
-  },
-  estimatedDeliverytime: {
-    type: String,
-    required: true,
-  },
   totalBill: {
     type: Number,
     required: true,
   },
-  Carts: {
+  carts: {
     type: Array,
     required: true,
   },

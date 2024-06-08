@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mobileandroidapp_kotlin.ui.screens.AddPaymentMethod
 import com.example.mobileandroidapp_kotlin.ui.screens.AddShippingAddress
 import com.example.mobileandroidapp_kotlin.ui.screens.BottomTabScreen
 import com.example.mobileandroidapp_kotlin.ui.screens.DetailScreen
@@ -18,6 +19,11 @@ import com.example.mobileandroidapp_kotlin.ui.screens.PaymentScreen
 import com.example.mobileandroidapp_kotlin.ui.screens.SignInScreen
 import com.example.mobileandroidapp_kotlin.ui.screens.SignUpScreen
 import com.example.mobileandroidapp_kotlin.ui.screens.CartScreen
+import com.example.mobileandroidapp_kotlin.ui.screens.OrderDetailScreen
+import com.example.mobileandroidapp_kotlin.ui.screens.PaymentMethodScreen
+import com.example.mobileandroidapp_kotlin.ui.screens.SettingScreen
+import com.example.mobileandroidapp_kotlin.ui.screens.ShippingAddress
+import com.example.mobileandroidapp_kotlin.ui.screens.SuccessPaymentScreen
 import com.example.mobileandroidapp_kotlin.ui.screens.tabscreens.FavoriteScreen
 import com.example.mobileandroidapp_kotlin.ui.screens.tabscreens.HomeScreen
 import com.example.mobileandroidapp_kotlin.ui.screens.tabscreens.NotificationScreens
@@ -36,7 +42,13 @@ sealed class Screens(val route: String, val label: String, val icon: ImageVector
     object BottomTab : Screens("bottomtab", "Bottom Tab", Icons.Filled.Menu)
     object Cart : Screens("cart", "Cart", null)
     object Payment : Screens("payment", "Payment", null)
-    object AddShippingAddress : Screens("shippingAdress", "Add Shipping Address", null)
+    object ShippingAdress : Screens("shippingAddress", "Shipping Address", null)
+    object PaymentMethod : Screens("paymentMethod", "Payment Method", null)
+    object AddShippingAddress : Screens("addShippingAddress", "Add Shipping Address", null)
+    object AddPaymentMethod : Screens("addPayment", "Add Payment Method", null)
+    object PaymentSuccessScreen : Screens("paymentSucess", " Payment Success", null)
+    object OrderDetailsScreen : Screens("OrderDetailScreen", " Order Details ", null)
+    object SettingScreen : Screens("SettingScreen", " Setting ", null)
 }
 
 
@@ -53,6 +65,7 @@ fun NavHostTabContainer(navController: NavHostController,viewModel : MainViewMod
         navController = navController,
         startDestination = Screens.Home.route,
     ) {
+        composable(Screens.SignIn.route) { SignInScreen(navController,viewModel=viewModel) }
         composable(Screens.Home.route) { HomeScreen(navController,viewModel= viewModel) }
         composable(Screens.Favorite.route) { FavoriteScreen(navController,viewModel=viewModel) }
         composable(Screens.Notification.route) { NotificationScreens(navController,viewModel=viewModel) }
@@ -61,7 +74,14 @@ fun NavHostTabContainer(navController: NavHostController,viewModel : MainViewMod
         composable(Screens.BottomTab.route) { BottomTabScreen(navController,viewModel=viewModel) }
         composable(Screens.Cart.route) { CartScreen(navController,viewModel=viewModel) }
         composable(Screens.Payment.route) { PaymentScreen(navController,viewModel=viewModel) }
+        composable(Screens.ShippingAdress.route) { ShippingAddress(navController,viewModel=viewModel) }
+        composable(Screens.PaymentMethod.route) { PaymentMethodScreen(navController,viewModel=viewModel) }
         composable(Screens.AddShippingAddress.route) { AddShippingAddress(navController,viewModel=viewModel) }
+        composable(Screens.AddPaymentMethod.route) { AddPaymentMethod(navController,viewModel=viewModel) }
+        composable(Screens.PaymentSuccessScreen.route) {SuccessPaymentScreen(navController,viewModel=viewModel) }
+        composable(Screens.OrderDetailsScreen.route) { OrderDetailScreen(navController,viewModel=viewModel) }
+        composable(Screens.SettingScreen.route) { SettingScreen(navController,viewModel=viewModel) }
+
     }
 }
 

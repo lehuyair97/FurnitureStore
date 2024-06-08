@@ -54,6 +54,7 @@ router.get("/users", userAPI.getAllUsers);
 router.get("/users/:id", userAPI.getUserById);
 router.put("/change_pw/:id", userAPI.changePassword);
 router.put("/favorites/:id", userAPI.updateFavorite);
+router.put("/updateInfo/:id", userAPI.updateInfo);
 router.put("/payment_method/:id", userAPI.updatePaymentMethod);
 router.delete("/users/:id", userAPI.deleteUser);
 router.post("/login", userAPI.login);

@@ -26,21 +26,19 @@ import com.example.mobileandroidapp_kotlin.viewmodel.MainViewModel
 fun BottomTabScreen(navHost: NavHostController, viewModel: MainViewModel ) {
     val showBottomNav by viewModel.showBottomNav.collectAsState()
     viewModel.setShowBottomNav(true)
-
+    val _selectedBottomIndex by viewModel.selectedBottomIndex.collectAsState();
 
 
     val navController = rememberNavController()
-    var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
-    val signInState by viewModel.signInState.collectAsState()
     Scaffold(
         bottomBar = {
             if(showBottomNav){
                 NavigationBar{
                     bottomNavItems.forEachIndexed { index, item ->
                         NavigationBarItem(
-                            selected = selectedItemIndex == index,
+                            selected = _selectedBottomIndex == index,
                             onClick = {
-                                selectedItemIndex = index
+                                viewModel.setSelectedBottomIndex(index)
                                 navController.navigate(item.route){
                                     popUpTo(navController.graph.startDestinationId) {
                                         saveState = true

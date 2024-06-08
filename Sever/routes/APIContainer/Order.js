@@ -24,7 +24,7 @@ exports.getOrdersByUserId = async (req, res) => {
   try {
     const { customerId } = req.params; // Lấy userID từ request params
     const orders = await orderModel.find({ customerId: customerId });
-    res.status(200).json(orders);
+    res.status(200).json({data:orders});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -33,7 +33,7 @@ exports.getOrdersByUserId = async (req, res) => {
 exports.createOrder = async (req, res) => {
   try {
     const newOrder = await orderModel.create(req.body); // Tạo đơn hàng từ dữ liệu trong request body
-    res.status(201).json(newOrder); // Trả về đơn hàng đã được tạo thành công
+    res.status(201).json({data : newOrder}); // Trả về đơn hàng đã được tạo thành công
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -1,8 +1,7 @@
 package com.example.mobileandroidapp_kotlin.model
 
 
-data class Users(
-    val  _id: String ,
+data class UsersSignUpRequest(
     var userName: String,
     var email: String,
     var password: String,

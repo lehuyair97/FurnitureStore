@@ -2,6 +2,7 @@ package com.example.mobileandroidapp_kotlin.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -11,6 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,18 +24,28 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mobileandroidapp_kotlin.Components.ButtonCustom
 import com.example.mobileandroidapp_kotlin.R
 import com.example.mobileandroidapp_kotlin.model.Users
+import com.example.mobileandroidapp_kotlin.model.UsersSignUpRequest
 import com.example.mobileandroidapp_kotlin.ui.theme.MobileAndroidApp_KotlinTheme
 import com.example.mobileandroidapp_kotlin.viewmodel.MainViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
+    CoroutineScope(Dispatchers.Default).launch {
+        viewModel.setShowBottomNav(false)
+    }
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var re_password by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
+    var rePasswordVisible by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -88,26 +101,44 @@ fun SignUpScreen(navController: NavController, viewModel: MainViewModel = hiltVi
                 unfocusedBorderColor = Color.Black
             ))
         Spacer(modifier = Modifier.height(25.dp))
-        OutlinedTextField(value = password, onValueChange = { password = it }, label = { Text("Password") }
-            ,modifier= Modifier
-                .background(Color.White)
-                .fillMaxWidth(),
+        OutlinedTextField(value = password, onValueChange = { password = it }, label = { Text("Password") },
+            trailingIcon = {
+                var iconResourceId = if (passwordVisible) R.drawable.ic_visibility else R.drawable.ic_invisibility
+                Icon(
+                    painter = painterResource(iconResourceId),
+                    contentDescription = "Password Icon",
+                    modifier = Modifier.clickable { passwordVisible = !passwordVisible },
+                    tint = Color.Gray
+                )
+            },
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black
+                unfocusedBorderColor = Color.Black,
             ))
+
         Spacer(modifier = Modifier.height(25.dp))
-        OutlinedTextField(value = re_password, onValueChange = { re_password = it }, label = { Text("Confirm Password") }
-            ,modifier= Modifier
-                .background(Color.White)
-                .fillMaxWidth(),
+        OutlinedTextField(value = re_password, onValueChange = { re_password = it }, label = { Text("Confirm Password") },
+            trailingIcon = {
+                var iconResourceId = if (rePasswordVisible) R.drawable.ic_visibility else R.drawable.ic_invisibility
+                Icon(
+                    painter = painterResource(iconResourceId),
+                    contentDescription = "Password Icon",
+                    modifier = Modifier.clickable { rePasswordVisible = !rePasswordVisible },
+                    tint = Color.Gray
+                )
+            },
+            visualTransformation = if (rePasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black
+                unfocusedBorderColor = Color.Black,
             ))
+
         Spacer(modifier = Modifier.height(25.dp))
         ButtonCustom("Sign Up"){
-            viewModel.signUp(Users(name,email,password,"","",""))
+            viewModel.signUp(UsersSignUpRequest(name,email,password))
         }
         Spacer(modifier = Modifier.height(15.dp))
         TextButton(onClick = { navController.navigate("signin") }) {

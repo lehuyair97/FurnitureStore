@@ -1,6 +1,7 @@
 package com.example.mobileandroidapp_kotlin.ui.screens
 
-import androidx.compose.foundation.Image
+import android.nfc.Tag
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -10,30 +11,34 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.mobileandroidapp_kotlin.Components.ButtonCustom
 import com.example.mobileandroidapp_kotlin.Components.HeadNav
 import com.example.mobileandroidapp_kotlin.Components.ListSelectedCustom
-import com.example.mobileandroidapp_kotlin.R
+import com.example.mobileandroidapp_kotlin.model.Address
 import com.example.mobileandroidapp_kotlin.model.District
 import com.example.mobileandroidapp_kotlin.model.Province
+import com.example.mobileandroidapp_kotlin.model.Users
 import com.example.mobileandroidapp_kotlin.model.Ward
 import com.example.mobileandroidapp_kotlin.viewmodel.MainViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.internal.userAgent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddShippingAddress(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
-    // Fetch provinces when the screen is loaded
+fun AddShippingAddress(navController: NavController, viewModel: MainViewModel ) {
+    CoroutineScope(Dispatchers.Default).launch {
+        viewModel.setShowBottomNav(false)
+    }
     LaunchedEffect(Unit) {
         viewModel.fetchProvinces()
     }
-
+    val user by viewModel.currentUser.collectAsState();
     val provinces by viewModel.provinces.collectAsState()
     val districts by viewModel.districts.collectAsState()
     val wards by viewModel.wards.collectAsState()
@@ -42,7 +47,7 @@ fun AddShippingAddress(navController: NavController, viewModel: MainViewModel = 
     var selectedDistrict by remember { mutableStateOf<District?>(null) }
     var selectedWard by remember { mutableStateOf<Ward?>(null) }
 
-    var name by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(user?.userName?:"") }
     var detailAddress by remember { mutableStateOf("") }
 
     Column(
@@ -116,7 +121,7 @@ fun AddShippingAddress(navController: NavController, viewModel: MainViewModel = 
             }
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         OutlinedTextField(
             value = detailAddress,
@@ -135,9 +140,21 @@ fun AddShippingAddress(navController: NavController, viewModel: MainViewModel = 
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 ButtonCustom(text = "Save Address") {
-                    // Handle save address action
+                    val listAddress: MutableList<Address> = user?.address?.toMutableList() ?: mutableListOf()
+                    val ward = selectedWard?.ward_name
+                    val district = selectedDistrict?.district_name
+                    val province = selectedProvince?.province_name
+                    val newAddress= Address("$ward - $district - $province",detailAddress)
+                    listAddress.add(newAddress)
+                    val newUser = user?.copy(address = listAddress);
+                    viewModel.setCurrentUser(newUser)
+                    if (newUser != null) {
+                        Log.e("Tag","ValueUser: $listAddress")
+                        viewModel.sendNewInfoToSever(newUser)
+                    }
                 }
             }
         }
     }
 }
+

@@ -29,10 +29,16 @@ import com.example.mobileandroidapp_kotlin.model.SignIn
 import com.example.mobileandroidapp_kotlin.model.Users
 import com.example.mobileandroidapp_kotlin.ui.theme.MobileAndroidApp_KotlinTheme
 import com.example.mobileandroidapp_kotlin.viewmodel.MainViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignInScreen(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
+    CoroutineScope(Dispatchers.Default).launch {
+        viewModel.setShowBottomNav(false)
+    }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }

@@ -1,24 +1,26 @@
 package com.example.mobileandroidapp_kotlin.viewmodel
 
-import ApiService
 import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobileandroidapp_kotlin.model.Carts
 import com.example.mobileandroidapp_kotlin.model.District
 import com.example.mobileandroidapp_kotlin.model.Furnitures
+import com.example.mobileandroidapp_kotlin.model.Order
 import com.example.mobileandroidapp_kotlin.model.PaymentMethod
 import com.example.mobileandroidapp_kotlin.model.Province
 import com.example.mobileandroidapp_kotlin.model.SignIn
 import com.example.mobileandroidapp_kotlin.model.Users
+import com.example.mobileandroidapp_kotlin.model.UsersSignUpRequest
 import com.example.mobileandroidapp_kotlin.model.Ward
 import com.example.mobileandroidapp_kotlin.network.RetrofitInstance
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,8 +29,14 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor() : ViewModel() {
     private val _currentUser = MutableStateFlow<Users?>(null)
     val currentUser: MutableStateFlow<Users?> = _currentUser
-    fun setCurrentUser(user : Users){
+    fun setCurrentUser(user: Users?){
         _currentUser.value = user;
+    }
+
+    var _selectedBottomIndex = MutableStateFlow (0);
+    var selectedBottomIndex : StateFlow<Int> = _selectedBottomIndex;
+    fun setSelectedBottomIndex(index: Int){
+        _selectedBottomIndex.value = index
     }
 
     private val _showBottomNav = MutableStateFlow(true)
@@ -95,7 +103,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
     }
 
 
-    fun signUp(request: Users) {
+    fun signUp(request: UsersSignUpRequest) {
         viewModelScope.launch {
             try {
                 val signUpResult = RetrofitInstance.api.signUp(request)
@@ -111,6 +119,9 @@ class MainViewModel @Inject constructor() : ViewModel() {
 
 
     private val _cartsData = MutableStateFlow<List<Carts>>(emptyList())
+    fun setCart(carts: List<Carts>){
+        _cartsData.value = carts
+    }
     fun addCart(cart: Carts) {
         _cartsData.update { currentList ->
             val index = currentList.indexOfFirst{it._id == cart._id}
@@ -149,17 +160,19 @@ class MainViewModel @Inject constructor() : ViewModel() {
     }
 
 
-    fun deCrementQuantityCart(cart: Carts){
-        _cartsData.update {
-                currentList -> currentList.map {
-            if(it._id == cart._id) {
-                it.copy(quantity = it.quantity?.plus(1))
-            }else{
-                it
-            }
-        }
+    fun deCrementQuantityCart(cart: Carts) {
+        _cartsData.update { currentList ->
+            currentList.map {
+                if (it._id == cart._id && it.quantity!! > 0) {
+                    it.copy(quantity = it.quantity?.minus(1))
+                } else {
+                    it
+                }
+            }.filter { it.quantity!! > 0 }
         }
     }
+
+
 
     fun getCart() : StateFlow<List<Carts>> {
         val cardsData:  StateFlow<List<Carts>>  = _cartsData;
@@ -181,6 +194,19 @@ class MainViewModel @Inject constructor() : ViewModel() {
     fun sendFavoriteToSever(user: Users){
         viewModelScope.launch {
             val response = RetrofitInstance.api.updateFavorites(id = user._id, user);
+            try {
+                if(response.isSuccess){
+                    _currentUser.value = response.user;
+                }
+            }catch (e: Exception){
+                handleNetworkError(e)
+            }
+        }
+    }
+
+    fun sendNewInfoToSever(user: Users){
+        viewModelScope.launch {
+            val response = RetrofitInstance.api.updateUserInfo(id = user._id, user);
             try {
                 if(response.isSuccess){
                     _currentUser.value = response.user;
@@ -264,7 +290,52 @@ class MainViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    private fun handleNetworkError(e: Exception) {
+    private val _lastPaymentSuccess =  MutableStateFlow<Order?>(null);
+    val lastPaymentSuccess: StateFlow<Order?> = _lastPaymentSuccess;
+    fun setLastPaymentSucess(order: Order){
+        _lastPaymentSuccess.value = order
+    }
+    fun sendPaymentToSever(order: Order){
+        viewModelScope.launch {
+            val response = RetrofitInstance.api.payment(order);
+            try {
+                if(response.data != null){
+                    _lastPaymentSuccess.value = response.data;
+                }
+            }catch (e: Exception){
+                handleNetworkError(e)
+            }
+        }
+    }
+
+    private val _indexAddressSelected = MutableStateFlow(0);
+    val indexAddressSelected : StateFlow<Int> = _indexAddressSelected;
+    fun setIndexAddressSelected(index: Int){
+        _indexAddressSelected.value = index;
+    }
+
+    private val _indexPaymentSelected = MutableStateFlow(0);
+    val indexPaymentSelected : StateFlow<Int> = _indexPaymentSelected;
+    fun setIndexPaymentSelected(index: Int){
+        _indexPaymentSelected.value = index;
+    }
+
+    private val _historyOrders  = MutableStateFlow<List<Order>>(emptyList());
+    val historyOrders : StateFlow<List<Order>> = _historyOrders
+    fun fetchOrdersHistory(idUser:String){
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.api.getOrdersHistory(idUser);
+                if(response?.data != null){
+                    _historyOrders.value = response.data
+                }
+            }catch (e: Exception){
+                handleNetworkError(e)
+            }
+
+        }
+    }
+        private fun handleNetworkError(e: Exception) {
         Log.e("Network Error", "Error: $e")
     }
 }

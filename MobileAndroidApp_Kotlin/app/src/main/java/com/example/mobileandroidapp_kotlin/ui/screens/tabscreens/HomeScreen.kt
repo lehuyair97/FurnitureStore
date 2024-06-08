@@ -41,11 +41,14 @@ import com.example.mobileandroidapp_kotlin.viewmodel.MainViewModel
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(navController: NavController,viewModel: MainViewModel = hiltViewModel()) {
+
+
     val categoryList: List<Categories> = listOf(
         Categories("All", icon = painterResource(id = R.drawable.ic_all)),
         Categories("Chair", icon = painterResource(id = R.drawable.ic_chair)),
@@ -61,8 +64,11 @@ fun HomeScreen(navController: NavController,viewModel: MainViewModel = hiltViewM
     val cartsQuantity by viewModel.getCart().collectAsState();
     val cartsQt = cartsQuantity.size
     val currentUser by viewModel.currentUser.collectAsState();
+    currentUser?._id?.let { viewModel.fetchOrdersHistory(it) }
     Log.e("User Information", "User Info: $currentUser")
-
+    CoroutineScope(Dispatchers.Default).launch {
+        viewModel.setShowBottomNav(true)
+    }
 
 
     Column(modifier = Modifier
